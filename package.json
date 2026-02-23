@@ -1,7 +1,7 @@
 {
   "name": "demo",
   "version": "0.0.0",
-  "private": "true",
+  "private": true,
   "main": "server.js",
   "scripts": {
     "test": "mocha --exit tests/*",
@@ -13,6 +13,23 @@
     "supertest": "^6.3.4"
   },
   "dependencies": {
-    "express": "^4.18.2"
-  }
+    "express": "^4.18.2",
+    "nodemailer": "^8.0.1"
+  },
+  "description": "Garage services demo app",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BUSANAMONI-PAVAN/garage-services.git"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/BUSANAMONI-PAVAN/garage-services/issues"
+  },
+  "homepage": "https://github.com/BUSANAMONI-PAVAN/garage-services#readme"
 }

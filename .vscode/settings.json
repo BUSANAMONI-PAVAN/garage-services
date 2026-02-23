@@ -8,5 +8,7 @@
         "c:\\Users\\peete\\Downloads\\mysql-connector-j-9.1.0\\mysql-connector-j-9.1.0\\mysql-connector-j-9.1.0.jar",
         "lib\\twilio-10.6.3-jar-with-dependencies.jar",
         "test-lib\\\\*.jar"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.debug.settings.onBuildFailureProceed": true
 }
