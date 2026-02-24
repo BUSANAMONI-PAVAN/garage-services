@@ -6,10 +6,7 @@
     <groupId>com.garage</groupId>
     <artifactId>garage-services</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <modules>
-        <module>mvn</module>
-    </modules>
+    <packaging>jar</packaging>
     <name>Garage Services</name>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -33,6 +30,7 @@
         </dependency>
     </dependencies>
     <build>
+        <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -48,7 +46,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.garage.EmailService</mainClass>
+                    <mainClass>com.garage.ModernGarageApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>

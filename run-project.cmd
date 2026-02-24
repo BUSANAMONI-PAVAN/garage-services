@@ -34,7 +34,7 @@ for /f %%T in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss
 set "LOG_FILE=.server-%STAMP%.log"
 > ".server-log" echo %LOG_FILE%
 
-start "" /b cmd /c "node server.js > %LOG_FILE% 2>&1"
+start "" /b cmd /c "node api-server.js > %LOG_FILE% 2>&1"
 
 set "STARTED_PORT="
 for /f %%P in ('powershell -NoProfile -Command "$p='.server-port'; $deadline=(Get-Date).AddSeconds(20); while((Get-Date)-lt $deadline){ if(Test-Path $p){ $v=(Get-Content $p -Raw).Trim(); if($v){ Write-Output $v; exit 0 } }; Start-Sleep -Milliseconds 500 }; exit 1"') do set "STARTED_PORT=%%P"

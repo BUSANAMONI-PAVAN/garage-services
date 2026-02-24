@@ -5,7 +5,11 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha --exit tests/*",
-    "start": "node server.js"
+    "start": "run-desktop.cmd",
+    "desktop": "run-desktop.cmd",
+    "desktop:compile": "mvnw.cmd -Dmaven.repo.local=.m2/repository -DskipTests compile",
+    "verify:smtp": "node scripts/verify-smtp.js",
+    "start:server": "node server.js"
   },
   "license": "MIT",
   "devDependencies": {
@@ -13,7 +17,12 @@
     "supertest": "^6.3.4"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.18.0",
     "nodemailer": "^8.0.1"
   },
   "description": "Garage services demo app",

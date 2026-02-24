@@ -171,39 +171,81 @@ public class GarageServiceApp {
         }
 
         if (saveBookingToDatabase(name, email, vehicleType, cost)) {
-            try {
-                EmailService.sendEmail(
-                        email,
-                        "Garage Booking Confirmation",
-                        "Dear " + name
-                                + ",\n\nYour booking for "
-                                + vehicleType
-                                + " is confirmed.\nTotal Cost: Rs."
-                                + cost
-                                + "\n\nThank you."
-                );
-                JOptionPane.showMessageDialog(null, "Booking successful. Confirmation email sent.");
-            } catch (IllegalStateException configError) {
+            // Email can be toggled by JAVA_EMAIL_ENABLED and uses SMTP values from .env.
+            String emailEnabled = AppConfig.getOrDefault("JAVA_EMAIL_ENABLED", "false");
+            
+            if ("true".equalsIgnoreCase(emailEnabled)) {
+                try {
+                    String emailBody = "🚗 Welcome to Our Garage Services! 🚗\n\n"
+                            + "Dear " + name + ",\n\n"
+                            + "Great news! Your service booking has been confirmed.\n\n"
+                            + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                            + "📋 BOOKING DETAILS\n"
+                            + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                            + "Vehicle Type: " + vehicleType + "\n"
+                            + "Service Package: " + (isPremium ? "Premium ⭐" : "Standard") + "\n"
+                            + "Total Cost: Rs. " + String.format("%.2f", cost) + "\n"
+                            + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+                            + "✨ What's Next?\n"
+                            + "• Our team will contact you shortly to schedule your service\n"
+                            + "• Please bring your vehicle at the scheduled time\n"
+                            + "• Our expert technicians will take care of everything!\n\n"
+                            + "💡 Need to reschedule or have questions?\n"
+                            + "Feel free to reach out to us anytime.\n\n"
+                            + "Our contact details:\n"
+                            + "📞 Phone: +91 9876543210\n"
+                            + "📧 Email: support@garageservices.com\n"
+                            + "🌐 Website: www.garageservices.com\n\n"
+                            + "Thank you for choosing our services! We look forward to serving you.\n\n"
+                            + "Best regards,\n"
+                            + "Your Garage Services Team\n"
+                            + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+                    
+                    EmailService.sendEmail(
+                            email,
+                            "🎉 Your Garage Service Booking is Confirmed!",
+                            emailBody
+                    );
+                    JOptionPane.showMessageDialog(null, "Booking successful! Confirmation email sent.");
+                } catch (Exception emailError) {
+                    String errorMessage = simplifyEmailError(emailError);
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Booking saved successfully!\n\n(Email sending failed: " + errorMessage + ")",
+                            "Booking Confirmed",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                    System.err.println("Email error: " + errorMessage);
+                }
+            } else {
                 JOptionPane.showMessageDialog(
                         null,
-                        "Booking saved, but email was not sent: " + configError.getMessage(),
-                        "Email Configuration Error",
-                        JOptionPane.WARNING_MESSAGE
+                        "Booking successful!\n\nName: " + name + "\nEmail: " + email + "\nVehicle: " + vehicleType + "\nCost: Rs." + cost,
+                        "Booking Confirmed",
+                        JOptionPane.INFORMATION_MESSAGE
                 );
-                System.err.println(configError.getMessage());
-            } catch (RuntimeException emailError) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Booking saved, but email failed: " + emailError.getMessage(),
-                        "Email Error",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                System.err.println(emailError.getMessage());
             }
 
             nameField.setText("");
             emailField.setText("");
         }
+    }
+
+    private static String simplifyEmailError(Throwable error) {
+        Throwable cursor = error;
+        while (cursor.getCause() != null && cursor.getCause() != cursor) {
+            cursor = cursor.getCause();
+        }
+
+        String message = cursor.getMessage();
+        if (message == null || message.isBlank()) {
+            message = error.getMessage();
+        }
+        if (message == null || message.isBlank()) {
+            return "Unknown email error.";
+        }
+
+        return message.replace("Email send failed: Email send failed:", "Email send failed:");
     }
 
     private static void handleFeedback(JTextArea feedbackArea) {
@@ -289,7 +331,7 @@ public class GarageServiceApp {
     }
 
     public static void main(String[] args) {
-        List<String> missingDb = AppConfig.missing("JAVA_DB_URL", "JAVA_DB_USER", "JAVA_DB_PASSWORD");
+        List<String> missingDb = AppConfig.missing("JAVA_DB_URL", "JAVA_DB_USER");
         if (!missingDb.isEmpty()) {
             showStartupError(
                     "Missing required database configuration: "
@@ -299,10 +341,13 @@ public class GarageServiceApp {
             return;
         }
 
+        // Allow empty password (some MySQL installations have no root password)
+        String dbPassword = AppConfig.get("JAVA_DB_PASSWORD");
+
         new GarageServiceApp(
                 AppConfig.get("JAVA_DB_URL"),
                 AppConfig.get("JAVA_DB_USER"),
-                AppConfig.get("JAVA_DB_PASSWORD")
+                dbPassword
         );
     }
 }
